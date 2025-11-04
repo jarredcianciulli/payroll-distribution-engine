@@ -10,7 +10,7 @@ This was built using **Node.js**, **React**, **TypeScript**, and **Vite** to dem
 
 ### 1. Complex Data Mapping
 
-- Takes a single 48-column "master" CSV and transforms it into two completely different provider-specific schemas.
+- Takes a single multi-record format CSV file (HDR/DET/FTR structure) with 82 fields per detail record and transforms it into two completely different provider-specific schemas.
 - Handles data transformations (e.g., `annual_salary` to `per_paycheck_rate`).
 - Handles code mapping (e.g., `Married` → `M` for ADP, but `Married` → `married_filing_jointly` for QuickBooks).
 - Handles complex field combinations (e.g., creating a single "Home Address" string).
@@ -79,7 +79,7 @@ The codebase is structured to easily migrate to a REST API:
 1. Clone the repository:
 
    ```bash
-   git clone [your-repo-url]
+   git clone https://github.com/jarredcianciulli/payroll-distribution-engine.git
    cd payroll-distribution-engine
    ```
 
@@ -113,7 +113,7 @@ The built files will be in the `dist/` directory.
 
 1. Click on the **Upload CSV** tab
 2. Download the input template to see the required format
-3. Upload your `employees.csv` file (drag-and-drop or click to browse)
+3. Upload your CSV file (drag-and-drop or click to browse)
 4. Preview of the first 5 rows will be shown
 
 ### 2. Process Payroll
@@ -171,22 +171,46 @@ payroll-distribution-engine/
 
 ## Standard Input Format
 
-The engine expects a CSV file with 48 columns following this format:
+The engine expects a CSV file using a multi-record format with three record types:
 
-| Field       | Type   | Required | Description                          |
-| ----------- | ------ | -------- | ------------------------------------ |
-| employee_id | string | Yes      | Unique employee identifier           |
-| first_name  | string | Yes      | Employee first name                  |
-| last_name   | string | Yes      | Employee last name                   |
-| dob         | date   | Yes      | Date of birth (YYYY-MM-DD)           |
-| ssn         | string | Yes      | Social Security Number (XXX-XX-XXXX) |
-| home_street | string | Yes      | Home address street                  |
-| home_city   | string | Yes      | Home address city                    |
-| home_state  | string | Yes      | Home address state (2-letter code)   |
-| home_zip    | string | Yes      | Home address ZIP code                |
-| ...         | ...    | ...      | ... (see field specification CSV)    |
+### Record Structure
 
-**Download the field specification CSV** from the Upload tab to see all 48 fields with validation rules, options, and notes.
+1. **HDR (Header) Record** - First row in file (optional but recommended)
+
+   - Contains file-level metadata: format version, upload ID, timestamp, employer ID, total record count, processing date
+   - Fields: `record_type`, `format_version`, `upload_id`, `file_timestamp`, `file_name`, `directory_path`, `employer_id`, `total_records`, `processing_date`
+
+2. **DET (Detail) Records** - Employee data rows (required)
+
+   - Each DET record contains 82 fields total:
+     - **3 Record Tracking Fields:** `record_type` (must be "DET"), `record_sequence` (sequential line number), `company_id` (company identifier)
+     - **79 Employee Data Fields:** Complete payroll information including identity, compensation, tax, deductions, compliance, and EEO-1 data
+
+3. **FTR (Footer/Trailer) Record** - Last row in file (optional)
+   - Contains summary totals: total employees processed, skipped, and errors encountered
+   - Fields: `record_type` (must be "FTR"), `total_employees_processed`, `total_employees_skipped`, `total_errors`
+
+### DET Record Format (82 fields)
+
+Each DET record follows this structure:
+
+| Field           | Type   | Required | Description                          |
+| --------------- | ------ | -------- | ------------------------------------ |
+| record_type     | string | Yes      | Must be "DET" for detail records     |
+| record_sequence | string | Yes      | Sequential line number (1, 2, 3...)  |
+| company_id      | string | Yes      | Company identifier                   |
+| employee_id     | string | Yes      | Unique employee identifier           |
+| first_name      | string | Yes      | Employee first name                  |
+| last_name       | string | Yes      | Employee last name                   |
+| dob             | date   | Yes      | Date of birth (YYYY-MM-DD)           |
+| ssn             | string | Yes      | Social Security Number (XXX-XX-XXXX) |
+| home_street     | string | Yes      | Home address street                  |
+| home_city       | string | Yes      | Home address city                    |
+| home_state      | string | Yes      | Home address state (2-letter code)   |
+| home_zip        | string | Yes      | Home address ZIP code                |
+| ...             | ...    | ...      | ... (see field specification CSV)    |
+
+**Download the field specification CSV** from the Upload tab to see all 82 fields (including record tracking and employee data) with validation rules, options, and notes.
 
 ---
 
@@ -261,7 +285,7 @@ When ready to migrate to a REST API:
 
 ## Sample Data
 
-A sample input file is included in `data_input/employees.csv` with three employees:
+A sample input file is included in `data_input/randomized_employee_data_sample.csv` with three employees:
 
 - **Employee 1001:** Fully compliant, ready for payroll
 - **Employee 1002:** Fully compliant, ready for payroll
