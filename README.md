@@ -1,6 +1,6 @@
 # Payroll Distribution Engine (Demo)
 
-This project is a high-fidelity simulation of an onboarding platform's (like Onboarded) core integration engine. It demonstrates the "one-to-many" transformation logic required to take a single, complex "source of truth" new-hire file and distribute that data to multiple downstream payroll providers (e.g., ADP, QuickBooks), each with its own unique file format, data schema, and business logic.
+This project is a high-fidelity simulation of an onboarding platform's core integration engine. It demonstrates the "one-to-many" transformation logic required to take a single, complex "source of truth" new-hire file and distribute that data to multiple downstream payroll providers (e.g., ADP, QuickBooks), each with its own unique file format, data schema, and business logic.
 
 This was built using **Node.js**, **React**, **TypeScript**, and **Vite** to demonstrate advanced domain expertise in payroll, benefits, and compliance integrations.
 
@@ -113,7 +113,7 @@ The built files will be in the `dist/` directory.
 
 1. Click on the **Upload CSV** tab
 2. Download the input template to see the required format
-3. Upload your `onboarded_new_hires.csv` file (drag-and-drop or click to browse)
+3. Upload your `employees.csv` file (drag-and-drop or click to browse)
 4. Preview of the first 5 rows will be shown
 
 ### 2. Process Payroll
@@ -261,7 +261,7 @@ When ready to migrate to a REST API:
 
 ## Sample Data
 
-A sample input file is included in `data_input/onboarded_new_hires.csv` with three employees:
+A sample input file is included in `data_input/employees.csv` with three employees:
 
 - **Employee 1001:** Fully compliant, ready for payroll
 - **Employee 1002:** Fully compliant, ready for payroll
