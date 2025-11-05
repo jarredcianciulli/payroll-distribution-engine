@@ -4,20 +4,13 @@
  */
 
 import { exportToCSV } from './csvWriter';
-import type { DETRecord, FieldSpecification } from '../types';
+import type { FieldSpecification } from '../types';
 
 /**
- * Standard input format header (all fields)
- * Note: HDR, DET, and FTR records use different field sets
- * This header represents DET (Detail) record fields
+ * Employee upload template headers (without system-generated fields)
+ * Excludes: record_type, record_sequence, company_id, employee_id
  */
-const STANDARD_INPUT_HEADERS = [
-  // Record type and record tracking (DET record)
-  'record_type',
-  'record_sequence',
-  'company_id',
-  // Employee data
-  'employee_id',
+const EMPLOYEE_UPLOAD_HEADERS = [
   'first_name',
   'last_name',
   'dob',
@@ -82,384 +75,451 @@ const STANDARD_INPUT_HEADERS = [
 ];
 
 /**
- * Generates a template CSV file with dummy data
- * Generates DET (Detail) records with record tracking fields
+ * Generates an empty employee upload template CSV with headers only (no mock data)
  */
 export function generateInputTemplate(): void {
-  const dummyData: Partial<DETRecord>[] = [
-    {
-      record_type: 'DET',
-      record_sequence: '1',
-      company_id: 'COMP001',
-      employee_id: '1001',
-      first_name: 'John',
-      last_name: 'Doe',
-      dob: '1990-05-15',
-      ssn: 'XXX-XX-1234',
-      home_street: '123 Main St',
-      home_city: 'Hanahan',
-      home_state: 'SC',
-      home_zip: '29410',
-      work_street: '456 King St',
-      work_city: 'Charleston',
-      work_state: 'SC',
-      work_zip: '29401',
-      hire_date: '2025-11-01',
-      original_hire_date: '2025-11-01',
-      job_title: 'Software Engineer',
-      department: 'Engineering',
-      manager_email: 'manager@company.com',
-      employee_email: 'john.doe@company.com',
-      employee_phone: '555-0101',
-      flsa_status: 'Exempt',
-      annual_salary: '120000',
-      pay_frequency: 'Bi-weekly',
-      employment_type: 'Full-time',
-      employee_status: 'Active',
-      pay_rate_type: 'Salary',
-      hours_per_week: '40',
-      fed_status: 'Married',
-      fed_allowances: '2',
-      fed_extra_wh_per_paycheck: '0.00',
-      state_code: 'SC',
-      state_extra_wh_per_paycheck: '0.00',
-      i9_status: 'Completed',
-      e_verify_status: 'Authorized',
-      dd1_routing_number: '012345678',
-      dd1_account_number: '987654321',
-      dd1_account_type: 'Checking',
-      dd1_split_type: 'Percent',
-      dd1_split_value: '100',
-      union_employee: 'Yes',
-      union_start_date: '2025-11-01',
-      union_dues_amount_per_paycheck: '25.00',
-      health_plan_name: 'PPO Plan',
-      health_deduction_per_paycheck: '85.50',
-      disability_plan_code: 'SC_SIT',
-      retirement_plan_type: '401k',
-      retirement_contribution_percent: '6',
-      retirement_loan_repayment: '0.00',
-      emergency_contact_name: 'Jane Doe',
-      emergency_contact_phone: '555-1234',
-      gender: 'Male',
-      ethnicity: 'White',
-      disability_status: 'No',
-      veteran_status: 'No'
-    },
-    {
-      record_type: 'DET',
-      record_sequence: '2',
-      company_id: 'COMP001',
-      employee_id: '1002',
-      first_name: 'Jane',
-      last_name: 'Smith',
-      dob: '1995-10-20',
-      ssn: 'XXX-XX-5678',
-      home_street: '456 Oak Ave',
-      home_city: 'Atlanta',
-      home_state: 'GA',
-      home_zip: '30301',
-      work_street: '456 Oak Ave',
-      work_city: 'Atlanta',
-      work_state: 'GA',
-      work_zip: '30301',
-      hire_date: '2025-11-03',
-      original_hire_date: '2025-11-03',
-      job_title: 'Product Manager',
-      department: 'Product',
-      manager_email: 'director@company.com',
-      employee_email: 'jane.smith@company.com',
-      employee_phone: '555-0102',
-      flsa_status: 'Exempt',
-      annual_salary: '140000',
-      pay_frequency: 'Weekly',
-      employment_type: 'Full-time',
-      employee_status: 'Active',
-      pay_rate_type: 'Salary',
-      hours_per_week: '40',
-      fed_status: 'Single',
-      fed_allowances: '1',
-      fed_extra_wh_per_paycheck: '0.00',
-      state_code: 'GA',
-      state_extra_wh_per_paycheck: '10.00',
-      local_tax_code_1: 'ATL_CITY_TAX',
-      i9_status: 'Completed',
-      e_verify_status: 'Authorized',
-      dd1_routing_number: '111111111',
-      dd1_account_number: '222222222',
-      dd1_account_type: 'Checking',
-      dd1_split_type: 'Flat_Amount',
-      dd1_split_value: '500',
-      dd2_routing_number: '111111111',
-      dd2_account_number: '333333333',
-      dd2_account_type: 'Savings',
-      union_employee: 'No',
-      health_plan_name: 'HSA Plan',
-      health_deduction_per_paycheck: '42.00',
-      disability_plan_code: 'GA_SDI',
-      retirement_plan_type: 'Roth 401k',
-      retirement_contribution_percent: '4',
-      retirement_loan_repayment: '0.00',
-      emergency_contact_name: 'John Smith',
-      emergency_contact_phone: '555-5678',
-      gender: 'Female',
-      ethnicity: 'Asian',
-      disability_status: 'No',
-      veteran_status: 'No'
-    }
-  ];
-
-  exportToCSV(dummyData as DETRecord[], 'randomized_employee_data_sample.csv', STANDARD_INPUT_HEADERS);
+  // Create empty template with just headers (no data rows)
+  const emptyTemplate: Record<string, string>[] = [];
+  
+  exportToCSV(emptyTemplate, 'employee_upload_template.csv', EMPLOYEE_UPLOAD_HEADERS);
 }
 
 /**
- * Generates format documentation CSV with headers and examples
+ * Generates employee upload template documentation CSV
+ * Defines standard field formats accepted for employee data uploads
  */
 export function generateFormatDocumentation(): void {
   const documentation = [
     {
-      'Field Name': 'employee_id',
-      'Example': '1001',
-      'Description': 'Unique employee identifier'
-    },
-    {
       'Field Name': 'first_name',
+      'Accepted Format': 'Any text string',
       'Example': 'John',
+      'Required': 'Yes',
       'Description': 'Employee first name'
     },
     {
       'Field Name': 'last_name',
+      'Accepted Format': 'Any text string',
       'Example': 'Doe',
+      'Required': 'Yes',
       'Description': 'Employee last name'
     },
     {
       'Field Name': 'dob',
+      'Accepted Format': 'YYYY-MM-DD format (e.g., 1990-05-15)',
       'Example': '1990-05-15',
+      'Required': 'Yes',
       'Description': 'Date of birth in YYYY-MM-DD format'
     },
     {
       'Field Name': 'ssn',
+      'Accepted Format': 'XXX-XX-XXXX or XXX-XX-1234 format',
       'Example': 'XXX-XX-1234',
-      'Description': 'Social Security Number (masked format)'
+      'Required': 'Yes',
+      'Description': 'Social Security Number in masked format (XXX-XX-XXXX)'
     },
     {
       'Field Name': 'home_street',
+      'Accepted Format': 'Any text string (street address)',
       'Example': '123 Main St',
-      'Description': 'Home address street'
+      'Required': 'Yes',
+      'Description': 'Street address for home location'
     },
     {
       'Field Name': 'home_city',
+      'Accepted Format': 'Any text string',
       'Example': 'Hanahan',
-      'Description': 'Home address city'
+      'Required': 'Yes',
+      'Description': 'City for home location'
     },
     {
       'Field Name': 'home_state',
+      'Accepted Format': '2-letter state code (e.g., SC, GA, NC, CA)',
       'Example': 'SC',
-      'Description': 'Home address state (2-letter code)'
+      'Required': 'Yes',
+      'Description': 'State abbreviation for home location (2-letter code)'
     },
     {
       'Field Name': 'home_zip',
+      'Accepted Format': '5-digit or 9-digit ZIP code',
       'Example': '29410',
-      'Description': 'Home address ZIP code'
+      'Required': 'Yes',
+      'Description': 'ZIP code for home location'
     },
     {
       'Field Name': 'work_street',
+      'Accepted Format': 'Any text string (street address)',
       'Example': '456 King St',
-      'Description': 'Work address street'
+      'Required': 'No',
+      'Description': 'Street address for work location (optional, used for tax reciprocity)'
     },
     {
       'Field Name': 'work_city',
+      'Accepted Format': 'Any text string',
       'Example': 'Charleston',
-      'Description': 'Work address city'
+      'Required': 'No',
+      'Description': 'City for work location (optional)'
     },
     {
       'Field Name': 'work_state',
+      'Accepted Format': '2-letter state code (e.g., SC, GA, NC, CA)',
       'Example': 'SC',
-      'Description': 'Work address state (2-letter code)'
+      'Required': 'No',
+      'Description': 'State abbreviation for work location (optional, used for tax reciprocity)'
     },
     {
       'Field Name': 'work_zip',
+      'Accepted Format': '5-digit or 9-digit ZIP code',
       'Example': '29401',
-      'Description': 'Work address ZIP code'
+      'Required': 'No',
+      'Description': 'ZIP code for work location (optional)'
     },
     {
       'Field Name': 'hire_date',
+      'Accepted Format': 'YYYY-MM-DD format (e.g., 2025-11-01)',
       'Example': '2025-11-01',
+      'Required': 'Yes',
       'Description': 'Employee hire date in YYYY-MM-DD format'
     },
     {
+      'Field Name': 'original_hire_date',
+      'Accepted Format': 'YYYY-MM-DD format (e.g., 2020-01-15)',
+      'Example': '2020-01-15',
+      'Required': 'No',
+      'Description': 'Original hire date (optional, for rehires to track original tenure)'
+    },
+    {
+      'Field Name': 'rehire_date',
+      'Accepted Format': 'YYYY-MM-DD format',
+      'Example': '2025-11-01',
+      'Required': 'No',
+      'Description': 'Rehire date if employee was previously terminated and rehired (optional)'
+    },
+    {
+      'Field Name': 'termination_date',
+      'Accepted Format': 'YYYY-MM-DD format',
+      'Example': '',
+      'Required': 'No',
+      'Description': 'Termination date if employee is no longer active (optional)'
+    },
+    {
       'Field Name': 'job_title',
+      'Accepted Format': 'Any text string',
       'Example': 'Software Engineer',
+      'Required': 'Yes',
       'Description': 'Employee job title'
     },
     {
       'Field Name': 'department',
+      'Accepted Format': 'Any text string',
       'Example': 'Engineering',
-      'Description': 'Employee department'
+      'Required': 'No',
+      'Description': 'Employee department (optional)'
     },
     {
       'Field Name': 'manager_email',
+      'Accepted Format': 'Valid email address format',
       'Example': 'manager@company.com',
-      'Description': 'Manager email address'
+      'Required': 'No',
+      'Description': 'Manager email address (optional)'
+    },
+    {
+      'Field Name': 'employee_email',
+      'Accepted Format': 'Valid email address format',
+      'Example': 'john.doe@company.com',
+      'Required': 'No',
+      'Description': 'Employee email address (optional, commonly used for payroll portal access)'
+    },
+    {
+      'Field Name': 'employee_phone',
+      'Accepted Format': 'Phone number format (text or numbers)',
+      'Example': '555-0101',
+      'Required': 'No',
+      'Description': 'Employee phone number (optional)'
     },
     {
       'Field Name': 'flsa_status',
+      'Accepted Format': 'Exempt or Non-Exempt (exact match required)',
       'Example': 'Exempt',
-      'Description': 'FLSA status: Exempt or Non-Exempt'
+      'Required': 'Yes',
+      'Description': 'FLSA status - must be exactly "Exempt" or "Non-Exempt"'
     },
     {
       'Field Name': 'annual_salary',
+      'Accepted Format': 'Numeric string (numbers only, no commas or currency symbols)',
       'Example': '120000',
-      'Description': 'Annual salary amount (numeric string)'
+      'Required': 'Yes',
+      'Description': 'Annual salary amount as numeric string (e.g., 120000 for $120,000)'
     },
     {
       'Field Name': 'pay_frequency',
+      'Accepted Format': 'Weekly, Bi-weekly, Semi-monthly, or Monthly (exact match required)',
       'Example': 'Bi-weekly',
-      'Description': 'Pay frequency: Weekly, Bi-weekly, Semi-monthly, or Monthly'
+      'Required': 'Yes',
+      'Description': 'Pay frequency - must be exactly one of: Weekly, Bi-weekly, Semi-monthly, or Monthly'
+    },
+    {
+      'Field Name': 'employment_type',
+      'Accepted Format': 'Full-time, Part-time, Contractor, Seasonal, or Temporary',
+      'Example': 'Full-time',
+      'Required': 'No',
+      'Description': 'Employment type (optional, affects benefits eligibility and tax treatment)'
+    },
+    {
+      'Field Name': 'employee_status',
+      'Accepted Format': 'Active, Inactive, Leave of Absence, or Terminated',
+      'Example': 'Active',
+      'Required': 'No',
+      'Description': 'Current employment status (optional, critical for employee data processing)'
+    },
+    {
+      'Field Name': 'pay_rate_type',
+      'Accepted Format': 'Salary or Hourly',
+      'Example': 'Salary',
+      'Required': 'No',
+      'Description': 'How pay is calculated - Salary (fixed) or Hourly (time-based) (optional)'
+    },
+    {
+      'Field Name': 'hours_per_week',
+      'Accepted Format': 'Numeric string (e.g., 40, 20, 30)',
+      'Example': '40',
+      'Required': 'No',
+      'Description': 'Standard hours per week (optional, important for part-time employees)'
     },
     {
       'Field Name': 'fed_status',
+      'Accepted Format': 'Single, Married, Married Filing Separately, or Head of Household (exact match required)',
       'Example': 'Married',
-      'Description': 'Federal filing status: Single, Married, Married Filing Separately, or Head of Household'
+      'Required': 'Yes',
+      'Description': 'Federal tax filing status - must match exactly one of the accepted values'
     },
     {
       'Field Name': 'fed_allowances',
+      'Accepted Format': 'Numeric string from 0 to 99',
       'Example': '2',
-      'Description': 'Federal tax allowances (numeric string)'
+      'Required': 'Yes',
+      'Description': 'Federal tax withholding allowances (0-99)'
     },
     {
       'Field Name': 'fed_extra_wh_per_paycheck',
+      'Accepted Format': 'Decimal number (e.g., 0.00, 50.00, 100.50)',
       'Example': '0.00',
-      'Description': 'Federal extra withholding per paycheck (decimal)'
+      'Required': 'Yes',
+      'Description': 'Additional federal withholding per paycheck as decimal (e.g., 50.00 for $50)'
     },
     {
       'Field Name': 'state_code',
+      'Accepted Format': '2-letter state code (e.g., SC, GA, NC, CA, NY)',
       'Example': 'SC',
-      'Description': 'State tax code (2-letter state abbreviation)'
+      'Required': 'Yes',
+      'Description': 'State tax code - 2-letter state abbreviation (where employee works)'
     },
     {
       'Field Name': 'state_extra_wh_per_paycheck',
+      'Accepted Format': 'Decimal number (e.g., 0.00, 10.00, 25.50)',
       'Example': '0.00',
-      'Description': 'State extra withholding per paycheck (decimal)'
+      'Required': 'Yes',
+      'Description': 'Additional state withholding per paycheck as decimal (e.g., 10.00 for $10)'
     },
     {
       'Field Name': 'local_tax_code_1',
+      'Accepted Format': 'Any text string (e.g., ATL_CITY_TAX, NYC_LOCAL_TAX)',
       'Example': 'ATL_CITY_TAX',
-      'Description': 'Local tax code (optional)'
+      'Required': 'No',
+      'Description': 'Local tax code (optional, if applicable)'
     },
     {
       'Field Name': 'i9_status',
+      'Accepted Format': 'Completed, Pending_Section_2, or Not_Started (exact match required)',
       'Example': 'Completed',
-      'Description': 'I-9 verification status: Completed, Pending_Section_2, or Not_Started'
+      'Required': 'Yes',
+      'Description': 'I-9 verification status - must be "Completed" for employee data processing'
     },
     {
       'Field Name': 'e_verify_status',
+      'Accepted Format': 'Authorized, Not_Started, or Pending (exact match required)',
       'Example': 'Authorized',
-      'Description': 'E-Verify status: Authorized, Not_Started, or Pending'
+      'Required': 'Yes',
+      'Description': 'E-Verify status - must be "Authorized" for employee data processing'
     },
     {
       'Field Name': 'dd1_routing_number',
+      'Accepted Format': '9-digit number (no dashes or spaces)',
       'Example': '012345678',
-      'Description': '9-digit routing number for primary direct deposit'
+      'Required': 'Yes',
+      'Description': 'Bank routing number for primary direct deposit (9 digits)'
     },
     {
       'Field Name': 'dd1_account_number',
+      'Accepted Format': 'Any string (account number)',
       'Example': '987654321',
-      'Description': 'Account number for primary direct deposit'
+      'Required': 'Yes',
+      'Description': 'Bank account number for primary direct deposit'
     },
     {
       'Field Name': 'dd1_account_type',
+      'Accepted Format': 'Checking or Savings (exact match required)',
       'Example': 'Checking',
-      'Description': 'Account type for primary DD: Checking or Savings'
+      'Required': 'Yes',
+      'Description': 'Account type for primary direct deposit - must be "Checking" or "Savings"'
     },
     {
       'Field Name': 'dd1_split_type',
+      'Accepted Format': 'Percent or Flat_Amount (exact match required)',
       'Example': 'Percent',
-      'Description': 'Split type for primary DD: Percent or Flat_Amount'
+      'Required': 'Yes',
+      'Description': 'How primary direct deposit split is calculated - "Percent" or "Flat_Amount"'
     },
     {
       'Field Name': 'dd1_split_value',
+      'Accepted Format': 'Numeric string (if Percent: 0-100, if Flat_Amount: dollar amount)',
       'Example': '100',
-      'Description': 'Split value (percentage or flat amount)'
+      'Required': 'Yes',
+      'Description': 'Split value - if Percent: 0-100, if Flat_Amount: dollar amount (must sum to 100% if both DD1 and DD2 use Percent)'
     },
     {
       'Field Name': 'dd2_routing_number',
+      'Accepted Format': '9-digit number (no dashes or spaces)',
       'Example': '',
-      'Description': 'Routing number for secondary direct deposit (optional)'
+      'Required': 'No',
+      'Description': 'Bank routing number for secondary direct deposit (optional, 9 digits)'
     },
     {
       'Field Name': 'dd2_account_number',
+      'Accepted Format': 'Any string (account number)',
       'Example': '',
-      'Description': 'Account number for secondary direct deposit (optional)'
+      'Required': 'No',
+      'Description': 'Bank account number for secondary direct deposit (optional)'
     },
     {
       'Field Name': 'dd2_account_type',
+      'Accepted Format': 'Checking or Savings (exact match required)',
       'Example': '',
-      'Description': 'Account type for secondary DD: Checking or Savings (optional)'
+      'Required': 'No',
+      'Description': 'Account type for secondary direct deposit - "Checking" or "Savings" (optional)'
+    },
+    {
+      'Field Name': 'union_employee',
+      'Accepted Format': 'Yes or No (exact match required)',
+      'Example': 'Yes',
+      'Required': 'No',
+      'Description': 'Whether employee is a union member - "Yes" or "No" (optional)'
+    },
+    {
+      'Field Name': 'union_start_date',
+      'Accepted Format': 'YYYY-MM-DD format',
+      'Example': '2025-11-01',
+      'Required': 'No',
+      'Description': 'Date employee joined union in YYYY-MM-DD format (optional)'
+    },
+    {
+      'Field Name': 'union_dues_amount_per_paycheck',
+      'Accepted Format': 'Decimal number (e.g., 25.00, 0.00)',
+      'Example': '25.00',
+      'Required': 'No',
+      'Description': 'Union dues deduction per paycheck as decimal (optional)'
     },
     {
       'Field Name': 'health_plan_name',
+      'Accepted Format': 'Any text string',
       'Example': 'PPO Plan',
-      'Description': 'Health insurance plan name'
+      'Required': 'No',
+      'Description': 'Health insurance plan name (optional)'
     },
     {
       'Field Name': 'health_deduction_per_paycheck',
+      'Accepted Format': 'Decimal number (e.g., 85.50, 0.00)',
       'Example': '85.50',
-      'Description': 'Health insurance deduction per paycheck (decimal)'
+      'Required': 'No',
+      'Description': 'Health insurance premium deduction per paycheck as decimal (optional)'
     },
     {
       'Field Name': 'disability_plan_code',
+      'Accepted Format': 'State-specific code (e.g., SC_SIT, GA_SDI, CA_SDI)',
       'Example': 'SC_SIT',
-      'Description': 'Disability plan code'
+      'Required': 'No',
+      'Description': 'State disability insurance plan code (optional)'
     },
     {
       'Field Name': 'retirement_plan_type',
+      'Accepted Format': 'Any text string (e.g., 401k, Roth 401k, 403b)',
       'Example': '401k',
-      'Description': 'Retirement plan type (e.g., 401k, Roth 401k)'
+      'Required': 'No',
+      'Description': 'Type of retirement plan (optional)'
     },
     {
       'Field Name': 'retirement_contribution_percent',
+      'Accepted Format': 'Numeric string from 0 to 100',
       'Example': '6',
-      'Description': 'Retirement contribution percentage (numeric string)'
+      'Required': 'No',
+      'Description': 'Employee contribution percentage to retirement plan (0-100) (optional)'
     },
     {
       'Field Name': 'retirement_loan_repayment',
+      'Accepted Format': 'Decimal number (e.g., 75.00, 0.00)',
       'Example': '0.00',
-      'Description': 'Retirement loan repayment per paycheck (decimal)'
+      'Required': 'No',
+      'Description': 'Retirement loan repayment amount per paycheck as decimal (0.00 if no loan) (optional)'
     },
     {
       'Field Name': 'garnishment_type',
+      'Accepted Format': 'Any text string (e.g., Child_Support, Tax_Levy)',
       'Example': 'Child_Support',
-      'Description': 'Garnishment type (optional)'
+      'Required': 'No',
+      'Description': 'Type of garnishment (optional, if applicable)'
     },
     {
       'Field Name': 'garnishment_amount_per_paycheck',
+      'Accepted Format': 'Decimal number (e.g., 250.00, 0.00)',
       'Example': '250.00',
-      'Description': 'Garnishment amount per paycheck (decimal)'
+      'Required': 'No',
+      'Description': 'Garnishment amount per paycheck as decimal (0.00 if no garnishment) (optional)'
     },
     {
       'Field Name': 'emergency_contact_name',
+      'Accepted Format': 'Any text string',
       'Example': 'Jane Doe',
-      'Description': 'Emergency contact full name'
+      'Required': 'No',
+      'Description': 'Full name of emergency contact (optional)'
     },
     {
       'Field Name': 'emergency_contact_phone',
+      'Accepted Format': 'Phone number format (text or numbers)',
       'Example': '555-1234',
-      'Description': 'Emergency contact phone number'
+      'Required': 'No',
+      'Description': 'Phone number of emergency contact (optional)'
     },
     {
       'Field Name': 'gender',
+      'Accepted Format': 'Male, Female, Non-Binary, or Prefer Not to Say',
       'Example': 'Male',
-      'Description': 'Employee gender (for EEO-1 reporting)'
+      'Required': 'No',
+      'Description': 'Employee gender for EEO-1 reporting (optional)'
     },
     {
       'Field Name': 'ethnicity',
+      'Accepted Format': 'Any text string (e.g., White, Black, Hispanic, Asian, Native American)',
       'Example': 'White',
-      'Description': 'Employee ethnicity (for EEO-1 reporting)'
+      'Required': 'No',
+      'Description': 'Employee ethnicity for EEO-1 reporting (optional)'
+    },
+    {
+      'Field Name': 'disability_status',
+      'Accepted Format': 'Yes, No, or Prefer Not to Say',
+      'Example': 'No',
+      'Required': 'No',
+      'Description': 'EEO-1 reporting field for disability status (optional)'
+    },
+    {
+      'Field Name': 'veteran_status',
+      'Accepted Format': 'Yes, No, or Prefer Not to Say',
+      'Example': 'No',
+      'Required': 'No',
+      'Description': 'EEO-1 reporting field for veteran status (optional)'
     }
   ];
 
-  exportToCSV(documentation, 'employees_format_documentation.csv');
+  exportToCSV(documentation, 'employee_upload_template.csv');
 }
 
 /**
@@ -504,8 +564,8 @@ export function generateFieldSpecification(): void {
     { fieldName: 'fed_extra_wh_per_paycheck', fieldOptions: 'Decimal (e.g., 50.00)', required: 'Yes', notes: 'Additional federal withholding per paycheck' },
     { fieldName: 'state_code', fieldOptions: '2-letter state code', required: 'Yes', notes: 'State tax code (where employee works)' },
     { fieldName: 'state_extra_wh_per_paycheck', fieldOptions: 'Decimal (e.g., 10.00)', required: 'Yes', notes: 'Additional state withholding per paycheck' },
-    { fieldName: 'i9_status', fieldOptions: 'Completed, Pending_Section_2, Not_Started', required: 'Yes', notes: 'I-9 verification status. Must be Completed for payroll processing (compliance gate)' },
-    { fieldName: 'e_verify_status', fieldOptions: 'Authorized, Not_Started, Pending', required: 'Yes', notes: 'E-Verify status. Must be Authorized for payroll processing (compliance gate)' },
+    { fieldName: 'i9_status', fieldOptions: 'Completed, Pending_Section_2, Not_Started', required: 'Yes', notes: 'I-9 verification status. Must be Completed for employee data processing (compliance gate)' },
+    { fieldName: 'e_verify_status', fieldOptions: 'Authorized, Not_Started, Pending', required: 'Yes', notes: 'E-Verify status. Must be Authorized for employee data processing (compliance gate)' },
     { fieldName: 'dd1_routing_number', fieldOptions: '9-digit number', required: 'Yes', notes: 'Bank routing number for primary direct deposit' },
     { fieldName: 'dd1_account_number', fieldOptions: 'Any string', required: 'Yes', notes: 'Bank account number for primary direct deposit' },
     { fieldName: 'dd1_account_type', fieldOptions: 'Checking, Savings', required: 'Yes', notes: 'Account type for primary direct deposit' },
@@ -525,7 +585,7 @@ export function generateFieldSpecification(): void {
     { fieldName: 'employee_email', fieldOptions: 'Valid email address', required: 'No', notes: 'Employee email address (optional, commonly used for payroll portal access)' },
     { fieldName: 'employee_phone', fieldOptions: 'Phone number format', required: 'No', notes: 'Employee phone number (optional)' },
     { fieldName: 'employment_type', fieldOptions: 'Full-time, Part-time, Contractor, Seasonal, Temporary', required: 'No', notes: 'Employment type (affects benefits eligibility and tax treatment)' },
-    { fieldName: 'employee_status', fieldOptions: 'Active, Inactive, Leave of Absence, Terminated', required: 'No', notes: 'Current employment status (critical for payroll processing)' },
+    { fieldName: 'employee_status', fieldOptions: 'Active, Inactive, Leave of Absence, Terminated', required: 'No', notes: 'Current employment status (critical for employee data processing)' },
     { fieldName: 'pay_rate_type', fieldOptions: 'Salary, Hourly', required: 'No', notes: 'How pay is calculated (Salary = fixed, Hourly = time-based)' },
     { fieldName: 'hours_per_week', fieldOptions: 'Numeric string (e.g., 40, 20)', required: 'No', notes: 'Standard hours per week (important for part-time employees and benefits eligibility)' },
     { fieldName: 'local_tax_code_1', fieldOptions: 'Any string (e.g., ATL_CITY_TAX)', required: 'No', notes: 'Local tax code (if applicable, optional)' },

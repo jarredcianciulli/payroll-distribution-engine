@@ -1,13 +1,21 @@
 /**
  * Process Controller
- * Handles the complete payroll processing workflow
+ * Handles the complete employee data processing workflow
  */
 
-import { validateEmployeeRecord, isPayrollReady } from '../services/validator';
-import { transformToADP, transformToQuickBooks } from '../services/transformer';
-import { storeErrors } from '../services/errorTracker';
-import type { EmployeeRecord, ProcessingError, ProcessingWarning, ProcessingLog, LogLevel, ADPRecord, QuickBooksRecord } from '../types';
-import { generateErrorId } from '../services/errorTracker';
+import { validateEmployeeRecord, isPayrollReady } from "../services/validator";
+import { transformToADP, transformToQuickBooks } from "../services/transformer";
+import { storeErrors } from "../services/errorTracker";
+import type {
+  EmployeeRecord,
+  ProcessingError,
+  ProcessingWarning,
+  ProcessingLog,
+  LogLevel,
+  ADPRecord,
+  QuickBooksRecord,
+} from "../types";
+import { generateErrorId } from "../services/errorTracker";
 
 export interface ProcessingResult {
   processedEmployees: {
@@ -45,29 +53,34 @@ export async function processEmployees(
   options: ProcessingOptions = {}
 ): Promise<ProcessingResult> {
   const { onProgress, headerFields } = options;
-  
+
   const result: ProcessingResult = {
     processedEmployees: [],
     skippedEmployees: [],
     errors: [],
     warnings: [],
-    logs: []
+    logs: [],
   };
 
-  const addLog = (level: LogLevel, message: string, employeeId?: string, row?: number) => {
+  const addLog = (
+    level: LogLevel,
+    message: string,
+    employeeId?: string,
+    row?: number
+  ) => {
     const log: ProcessingLog = {
       id: generateErrorId(),
       timestamp: new Date().toISOString(),
       level,
       message,
       employeeId,
-      row
+      row,
     };
     result.logs.push(log);
     return log;
   };
 
-  addLog('INFO', `Starting processing of ${employees.length} employees`);
+  addLog("INFO", `Starting processing of ${employees.length} employees`);
 
   for (let i = 0; i < employees.length; i++) {
     const employee = employees[i];
@@ -75,19 +88,33 @@ export async function processEmployees(
 
     try {
       // Validate employee record
-      const validationErrors = validateEmployeeRecord(employee, i, headerFields);
+      const validationErrors = validateEmployeeRecord(
+        employee,
+        i,
+        headerFields
+      );
       result.errors.push(...validationErrors);
 
       if (validationErrors.length > 0) {
-        const errorFields = validationErrors.map(e => e.field).join(', ');
-        addLog('ERROR', `Row ${rowIndex}, Column ${errorFields}: Validation failed - ${validationErrors.length} issue(s) detected`, employee.employee_id, rowIndex);
+        const errorFields = validationErrors.map((e) => e.field).join(", ");
+        addLog(
+          "ERROR",
+          `Row ${rowIndex}, Column ${errorFields}: Validation failed - ${validationErrors.length} issue(s) detected`,
+          employee.employee_id,
+          rowIndex
+        );
       }
 
       // Check compliance gate
       if (!isPayrollReady(employee)) {
         const reason = `I-9 status: ${employee.i9_status}, E-Verify status: ${employee.e_verify_status}`;
         result.skippedEmployees.push({ employee, reason });
-        addLog('WARNING', `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Compliance check failed - ${reason}`, employee.employee_id, rowIndex);
+        addLog(
+          "WARNING",
+          `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Compliance check failed - ${reason}`,
+          employee.employee_id,
+          rowIndex
+        );
         continue;
       }
 
@@ -98,15 +125,25 @@ export async function processEmployees(
       result.processedEmployees.push({
         employee,
         adpRecord,
-        quickBooksRecord
+        quickBooksRecord,
       });
 
       // Only log SUCCESS if there are no validation errors
       if (validationErrors.length === 0) {
-        addLog('SUCCESS', `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Validated and ready for export`, employee.employee_id, rowIndex);
+        addLog(
+          "SUCCESS",
+          `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Validated and ready for export`,
+          employee.employee_id,
+          rowIndex
+        );
       } else {
         // Log INFO if transformed but has errors
-        addLog('INFO', `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Transformed with validation errors - export disabled until corrected`, employee.employee_id, rowIndex);
+        addLog(
+          "INFO",
+          `Employee ${employee.employee_id} (${employee.first_name} ${employee.last_name}): Transformed with validation errors - export disabled until corrected`,
+          employee.employee_id,
+          rowIndex
+        );
       }
 
       // Call progress callback
@@ -115,25 +152,32 @@ export async function processEmployees(
           current: i + 1,
           total: employees.length,
           isComplete: i === employees.length - 1,
-          logs: result.logs.slice(-5) // Last 5 logs
+          logs: result.logs.slice(-5), // Last 5 logs
         });
       }
 
       // Small delay to allow UI to update (simulates real-time processing)
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
     } catch (error) {
       const errorObj: ProcessingError = {
         id: generateErrorId(),
         rowId: employee.employee_id || `row_${rowIndex}`,
         row: rowIndex,
-        field: 'general',
-        value: '',
-        errorType: 'PARSE_ERROR',
-        message: `Failed to process employee: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date().toISOString()
+        field: "general",
+        value: "",
+        errorType: "PARSE_ERROR",
+        message: `Failed to process employee: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        timestamp: new Date().toISOString(),
       };
       result.errors.push(errorObj);
-      addLog('ERROR', `Failed to process employee ${employee.employee_id}`, employee.employee_id, rowIndex);
+      addLog(
+        "ERROR",
+        `Failed to process employee ${employee.employee_id}`,
+        employee.employee_id,
+        rowIndex
+      );
     }
   }
 
@@ -142,8 +186,10 @@ export async function processEmployees(
     storeErrors(result.errors);
   }
 
-  addLog('INFO', `Processing complete. ${result.processedEmployees.length} employees processed, ${result.skippedEmployees.length} employees skipped`);
+  addLog(
+    "INFO",
+    `Processing complete. ${result.processedEmployees.length} employees processed, ${result.skippedEmployees.length} employees skipped`
+  );
 
   return result;
 }
-

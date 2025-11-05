@@ -1,5 +1,5 @@
 /**
- * Type definitions for the Payroll Distribution Engine
+ * Type definitions for the SFTP Export Engine
  * All data structures and interfaces used throughout the application
  */
 

@@ -1,6 +1,6 @@
 /**
  * useProcessing Hook
- * Manages payroll processing state and operations
+ * Manages employee data processing state and operations
  */
 
 import { useState, useCallback } from 'react';

@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { recordCorrection } from '../services/errorTracker';
-import type { ProcessingError, EmployeeRecord, ErrorCorrection, ParsedAddress } from '../types';
+import type { ProcessingError, EmployeeRecord, ErrorCorrection } from '../types';
 import { IoClose } from 'react-icons/io5';
 
 interface ErrorCorrectionModalProps {
@@ -56,49 +56,7 @@ function getFieldOptions(fieldName: string): string[] {
   return FIELD_OPTIONS[fieldName] || [];
 }
 
-/**
- * Parses a single address string into components
- * Handles various formats: "123 Main St, City, State ZIP" or "123 Main St, City, ST ZIP"
- * Currently unused - kept for potential future use
- */
-function _parseAddress(_addressString: string): ParsedAddress | null {
-  if (!_addressString || _addressString.trim() === '') {
-    return null;
-  }
 
-  const trimmed = _addressString.trim();
-  
-  // Pattern: "Street, City, State ZIP" or "Street, City, ST ZIP"
-  // Try to match ZIP code (5 digits or 5+4 format)
-  const zipMatch = trimmed.match(/(\d{5}(?:-\d{4})?)\s*$/);
-  if (!zipMatch) {
-    return null;
-  }
-
-  const zip = zipMatch[1];
-  const beforeZip = trimmed.substring(0, trimmed.lastIndexOf(zip)).trim();
-  
-  // Split by comma
-  const parts = beforeZip.split(',').map(p => p.trim());
-  
-  if (parts.length < 2) {
-    return null;
-  }
-
-  // Last part should be state
-  const state = parts[parts.length - 1];
-  // Second to last should be city
-  const city = parts[parts.length - 2];
-  // Everything before that is street
-  const street = parts.slice(0, -2).join(', ');
-
-  return {
-    street: street || '',
-    city: city || '',
-    state: state || '',
-    zip: zip || ''
-  };
-}
 
 export function ErrorCorrectionModal({
   isOpen,

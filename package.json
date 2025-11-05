@@ -1,7 +1,7 @@
 {
   "name": "payroll-distribution-engine",
   "version": "1.0.0",
-  "description": "Payroll Distribution Engine - Demo for onboarding platform integration",
+  "description": "SFTP Export Engine - Demo for onboarding platform integration",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -26,8 +26,8 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "terser": "^5.44.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }
 }
-

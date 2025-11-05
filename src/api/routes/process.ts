@@ -1,6 +1,6 @@
 /**
  * Process API Route
- * Client-side API interface for payroll processing operations
+ * Client-side API interface for employee data processing operations
  */
 
 import { processEmployees } from '../../controllers/processController';

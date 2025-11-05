@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { useMappings } from '../hooks/useMappings';
+import { adpMapping, quickBooksMapping } from '../config/defaultMappings';
 import type { ProviderMapping, FieldMapping } from '../types';
 
 interface MappingEditorProps {
@@ -25,7 +26,8 @@ export function MappingEditor({ provider }: MappingEditorProps) {
   const handleReset = () => {
     if (confirm('Are you sure you want to reset to default mapping?')) {
       resetMapping();
-      setEditedMapping(getDefaultMapping(provider));
+      const defaultMapping = provider === 'ADP' ? adpMapping : quickBooksMapping;
+      setEditedMapping(defaultMapping);
       setIsEditing(false);
     }
   };

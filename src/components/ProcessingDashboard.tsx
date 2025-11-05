@@ -12,7 +12,7 @@ import { ProgressLogs } from './ProgressLogs';
 import { ErrorCorrection } from './ErrorCorrection';
 import { ErrorsModal } from './ErrorsModal';
 import { FaDownload } from 'react-icons/fa';
-import { IoCheckmarkCircle, IoCloseCircle, IoWarning } from 'react-icons/io5';
+import { IoCheckmarkCircle, IoCloseCircle, IoWarning, IoRefresh } from 'react-icons/io5';
 
 interface ProcessingDashboardProps {
   employees: EmployeeRecord[];
@@ -76,25 +76,57 @@ export function ProcessingDashboard({ employees, warnings, headerFields, onEmplo
     }
   };
 
-  const handleDownloadStandardFormat = () => {
+  const handleDownloadEmployeeUpload = () => {
     if (!result || result.processedEmployees.length === 0) {
       alert('No processed data available. Please process the file first.');
       return;
     }
 
-    // Get validated employee records (standard format)
-    const standardRecords = result.processedEmployees.map(pe => pe.employee);
+    // Get validated employee records (employee upload format)
+    const employeeRecords = result.processedEmployees.map(pe => pe.employee);
     
     // Get headers from first record (all EmployeeRecord fields)
-    const headers = standardRecords.length > 0 ? Object.keys(standardRecords[0]) : [];
+    const headers = employeeRecords.length > 0 ? Object.keys(employeeRecords[0]) : [];
     
     // Use clear filename based on whether errors exist
     const hasErrors = result.errors.length > 0;
     const filename = hasErrors 
-      ? 'your_file_HAS_ERRORS_fix_these.csv'
-      : 'your_file_ready_to_use.csv';
+      ? 'employee_upload_file_HAS_ERRORS_fix_these.csv'
+      : 'employee_upload_file.csv';
     
-    exportToCSV(standardRecords, filename, headers);
+    exportToCSV(employeeRecords, filename, headers);
+  };
+
+  const handleDownloadStandardExport = () => {
+    if (!result || result.processedEmployees.length === 0) {
+      alert('No processed data available. Please process the file first.');
+      return;
+    }
+
+    // Prompt for company_id (required for DETRecord)
+    const companyId = prompt('Enter Company ID for this export:', 'COMP001');
+    if (!companyId || companyId.trim() === '') {
+      alert('Company ID is required for standard export format.');
+      return;
+    }
+
+    // Convert EmployeeRecord to DETRecord (SFTP standard format)
+    const detRecords = result.processedEmployees.map((pe, index) => ({
+      ...pe.employee,
+      record_type: 'DET' as const,
+      record_sequence: String(index + 1),
+      company_id: companyId.trim(),
+    }));
+
+    // Get headers including DET record fields
+    const headers = detRecords.length > 0 ? Object.keys(detRecords[0]) : [];
+    
+    const hasErrors = result.errors.length > 0;
+    const filename = hasErrors 
+      ? 'standard_export_file_HAS_ERRORS_fix_these.csv'
+      : 'standard_export_file.csv';
+    
+    exportToCSV(detRecords, filename, headers);
   };
 
   // Check if downloads should be enabled (no errors and no warnings)
@@ -177,7 +209,7 @@ export function ProcessingDashboard({ employees, warnings, headerFields, onEmplo
       )}
 
       <div className="dashboard-header">
-        <h2>Payroll Processing</h2>
+        <h2>Employee Data Processing</h2>
         <div className="stats">
           <div className="stat">
             <span className="stat-label">Total Employees:</span>
@@ -204,21 +236,38 @@ export function ProcessingDashboard({ employees, warnings, headerFields, onEmplo
           disabled={isProcessing || employees.length === 0}
           className="btn btn-primary"
         >
-          {isProcessing ? 'Processing...' : 'Check Your File for Errors'}
+          {isProcessing ? 'Processing...' : (
+            <>
+              <IoRefresh style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+              Check Your File for Errors
+            </>
+          )}
         </button>
         {result && result.processedEmployees.length > 0 && (
           <>
             <button 
-              onClick={handleDownloadStandardFormat} 
+              onClick={handleDownloadEmployeeUpload} 
               className={`btn ${hasErrors ? 'btn-warning' : 'btn-success'}`}
               title={hasErrors 
-                ? "Download this file to fix errors in Excel, then upload it again" 
-                : "Download your file (ready to use)"}
+                ? "Download employee upload file to fix errors in Excel, then upload it again" 
+                : "Download employee upload file"}
             >
               <FaDownload />
               {hasErrors 
-                ? 'Download Your File (has errors - fix in Excel)' 
-                : 'Download Your File (ready to use)'}
+                ? 'Download Employee upload file (has errors - fix in Excel)' 
+                : 'Download Employee upload file'}
+            </button>
+            <button 
+              onClick={handleDownloadStandardExport} 
+              className={`btn ${hasErrors ? 'btn-warning' : 'btn-success'}`}
+              title={hasErrors 
+                ? "Download standard export file (SFTP format with record tracking) - fix errors first" 
+                : "Download standard export file (SFTP format with record tracking)"}
+            >
+              <FaDownload />
+              {hasErrors 
+                ? 'Download standard export file (has errors)' 
+                : 'Download standard export file'}
             </button>
             <div className="provider-download-section">
               <select

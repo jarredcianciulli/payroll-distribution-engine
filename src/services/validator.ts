@@ -102,15 +102,7 @@ function isValidStateCode(state: string): boolean {
   return /^[A-Z]{2}$/.test(state.toUpperCase());
 }
 
-/**
- * Validates ISO 8601 timestamp format
- * Currently unused - kept for potential future use
- */
-function _isValidTimestamp(_timestamp: string): boolean {
-  // ISO 8601 format: YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss.sssZ
-  const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})?$/;
-  return isoRegex.test(_timestamp);
-}
+
 
 /**
  * Validates a DET (Detail) record

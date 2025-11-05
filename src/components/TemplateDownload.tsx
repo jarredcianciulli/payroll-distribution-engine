@@ -21,17 +21,17 @@ export function TemplateDownload() {
   return (
     <div className="template-download">
       <p className="help-text">
-        Download the Payroll Distribution Engine standardized format templates and documentation to understand the required file structure, field specifications, and data formats.
+        Download the SFTP Export Engine standardized format templates and documentation to understand the required file structure, field specifications, and data formats.
       </p>
       <div className="button-group">
         <button onClick={handleDownloadTemplate} className="btn btn-primary">
-          Download Input Template
+          Employee upload template
         </button>
         <button onClick={handleDownloadDocumentation} className="btn btn-secondary">
-          Download Format Documentation
+          Employee upload specifications
         </button>
         <button onClick={handleDownloadSpecification} className="btn btn-secondary">
-          Download Field Specification
+          SFTP File Specifications
         </button>
       </div>
     </div>

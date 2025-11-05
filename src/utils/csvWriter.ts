@@ -13,12 +13,13 @@ export function arrayToCSV<T extends Record<string, any>>(
   data: T[],
   headers?: string[]
 ): string {
-  if (data.length === 0) {
+  // Use provided headers or extract from first object (if data exists)
+  const csvHeaders = headers || (data.length > 0 ? Object.keys(data[0]) : []);
+  
+  // If no headers and no data, return empty string
+  if (csvHeaders.length === 0) {
     return '';
   }
-
-  // Use provided headers or extract from first object
-  const csvHeaders = headers || Object.keys(data[0]);
   
   // Escape CSV values (handle commas, quotes, newlines)
   const escapeCSVValue = (value: any): string => {

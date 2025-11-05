@@ -1,6 +1,6 @@
 /**
  * Main App Component
- * Payroll Distribution Engine
+ * SFTP Export Engine
  */
 
 import { useState } from 'react';
@@ -26,8 +26,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Payroll Distribution Engine</h1>
-        <p className="subtitle">Transform new-hire data into provider-specific formats (ADP, QuickBooks)</p>
+        <h1>SFTP Export Engine</h1>
+        <p className="subtitle">Transform employee data into provider-specific formats (ADP, QuickBooks)</p>
       </header>
 
       <nav className="tabs">
@@ -42,7 +42,7 @@ function App() {
           onClick={() => setActiveTab('process')}
           disabled={employees.length === 0}
         >
-          Process Payroll
+          Process Employee data
         </button>
         <button
           className={activeTab === 'mappings' ? 'active' : ''}
@@ -84,7 +84,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Payroll Distribution Engine - Demo for onboarding platform integration</p>
+        <p>SFTP Export Engine - Demo for onboarding platform integration</p>
       </footer>
     </div>
   );

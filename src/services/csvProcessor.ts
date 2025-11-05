@@ -288,7 +288,7 @@ export async function processCSV(
           headerFields: headerFields || []
         });
       },
-      error: (error) => {
+      error: (error: Error) => {
         reject(new Error(`CSV parsing failed: ${error.message}`));
       }
     });
